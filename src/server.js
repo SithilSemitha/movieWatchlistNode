@@ -1,24 +1,28 @@
 import express from "express";
-import {config} from 'dotenv';
-import { connectDB } from "./config/db.js";
-import { disconnectDB } from "./config/db.js";
+import { config } from "dotenv";
+import { connectDB, disconnectDB } from "./config/db.js";
 
-//Import Routes
-
-import movieRoutes from "./routes/movieRoutes.js"
+// Import Routes
+import movieRoutes from "./routes/movieRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import watchlistRoutes from "./routes/watchlistRoutes.js";
 
 config();
 connectDB();
 
-
-
 const app = express();
 
-app.use('/movies',movieRoutes);
+// Body parsing middlwares
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-const PORT = 5001;
-app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+// API Routes
+app.use("/movies", movieRoutes);
+app.use("/auth", authRoutes);
+app.use("/watchlist", watchlistRoutes);
+
+const server = app.listen(process.env.PORT || 5001, "0.0.0.0", () => {
+  console.log(`Server running on PORT ${process.env.PORT}`);
 });
 
 // Handle unhandled promise rejections (e.g., database connection errors)
